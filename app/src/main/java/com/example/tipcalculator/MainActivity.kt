@@ -1,9 +1,5 @@
 package com.example.tipcalculator
 
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -82,7 +78,19 @@ fun MainScreen() {
 
             TextField(
                 value = numberOfDishes.value,
-                onValueChange = { numberOfDishes.value = it },
+                onValueChange = {
+                    numberOfDishes.value = it
+
+                    // Автоматическое определение скидки
+                    val dishes = it.toIntOrNull() ?: 0
+                    discountPercentage.value = when (dishes) {
+                        in 1..2 -> 3
+                        in 3..5 -> 5
+                        in 6..10 -> 7
+                        in 11..Int.MAX_VALUE -> 10
+                        else -> 0
+                    }
+                },
                 singleLine = true,
                 textStyle = TextStyle(color = Color.Black),
                 colors = TextFieldDefaults.colors(
@@ -118,7 +126,6 @@ fun MainScreen() {
                 Text(text = "${tipPercentage.value.toInt()}%")
             }
 
-            // Слайдер на всю ширину
             Slider(
                 value = tipPercentage.value,
                 onValueChange = { tipPercentage.value = it },
@@ -131,7 +138,6 @@ fun MainScreen() {
                 )
             )
 
-            // Подписи слева и справа
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
@@ -141,45 +147,35 @@ fun MainScreen() {
             }
         }
 
-        // Четвертая строка: Скидка
+        // Скидка
         Column(
             modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            Text(text = "Скидка:")
-
             Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceEvenly, // равномерное распределение
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                modifier = Modifier.fillMaxWidth()
             ) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    RadioButton(
-                        selected = discountPercentage.value == 3,
-                        onClick = { discountPercentage.value = 3 }
-                    )
-                    Text(text = "3%")
-                }
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    RadioButton(
-                        selected = discountPercentage.value == 5,
-                        onClick = { discountPercentage.value = 5 }
-                    )
-                    Text(text = "5%")
-                }
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    RadioButton(
-                        selected = discountPercentage.value == 7,
-                        onClick = { discountPercentage.value = 7 }
-                    )
-                    Text(text = "7%")
-                }
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    RadioButton(
-                        selected = discountPercentage.value == 10,
-                        onClick = { discountPercentage.value = 10 }
-                    )
-                    Text(text = "10%")
+                Text(text = "Скидка:", modifier = Modifier.width(80.dp))
+
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    listOf(3, 5, 7, 10).forEach { percent ->
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            RadioButton(
+                                selected = discountPercentage.value == percent,
+                                onClick = {}, // нельзя вручную менять
+                                colors = androidx.compose.material3.RadioButtonDefaults.colors(
+                                    selectedColor = Color.Blue,
+                                    unselectedColor = Color.Gray
+                                )
+                            )
+                            Text(text = "$percent%")
+                        }
+                    }
                 }
             }
         }
