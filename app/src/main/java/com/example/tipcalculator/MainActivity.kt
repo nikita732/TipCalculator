@@ -7,6 +7,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -20,22 +21,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.tipcalculator.ui.theme.TipCalculatorTheme
 
-class MainActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContent {
-            TipCalculatorTheme {
-                MainScreen()
-            }
-        }
-    }
-}
-
 @Composable
 fun MainScreen() {
     val orderAmount = remember { mutableStateOf("") }
     val numberOfDishes = remember { mutableStateOf("") }
+    val tipPercentage = remember { mutableStateOf(0f) }
 
     Column(
         modifier = Modifier
@@ -55,7 +45,7 @@ fun MainScreen() {
 
             TextField(
                 value = orderAmount.value,
-                onValueChange = { value: String -> orderAmount.value = value },
+                onValueChange = { orderAmount.value = it },
                 singleLine = true,
                 textStyle = TextStyle(color = Color.Black),
                 colors = TextFieldDefaults.colors(
@@ -90,7 +80,7 @@ fun MainScreen() {
 
             TextField(
                 value = numberOfDishes.value,
-                onValueChange = { value: String -> numberOfDishes.value = value },
+                onValueChange = { numberOfDishes.value = it },
                 singleLine = true,
                 textStyle = TextStyle(color = Color.Black),
                 colors = TextFieldDefaults.colors(
@@ -112,13 +102,41 @@ fun MainScreen() {
                     )
             )
         }
-    }
-}
 
-@Preview(showBackground = true)
-@Composable
-fun MainScreenPreview() {
-    TipCalculatorTheme {
-        MainScreen()
+        // Чаевые
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(text = "Чаевые:")
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(text = "${tipPercentage.value.toInt()}%")
+            }
+
+            // Слайдер на всю ширину
+            Slider(
+                value = tipPercentage.value,
+                onValueChange = { tipPercentage.value = it },
+                valueRange = 0f..25f,
+                modifier = Modifier.fillMaxWidth(),
+                colors = androidx.compose.material3.SliderDefaults.colors(
+                    thumbColor = Color.Blue,
+                    activeTrackColor = Color.Blue,
+                    inactiveTrackColor = Color.Blue.copy(alpha = 0.3f)
+                )
+            )
+
+            // Подписи слева и справа
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(text = "0")
+                Text(text = "25")
+            }
+        }
     }
 }
