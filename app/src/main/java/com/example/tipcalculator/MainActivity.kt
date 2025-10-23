@@ -25,6 +25,12 @@ fun MainScreen() {
     val tipPercentage = remember { mutableStateOf(0f) }
     val discountPercentage = remember { mutableStateOf(0) }
 
+    // Вспомогательные значения
+    val orderAmountFloat = orderAmount.value.toFloatOrNull() ?: 0f
+    val tipAmount = orderAmountFloat * tipPercentage.value / 100f
+    val discountAmount = orderAmountFloat * discountPercentage.value / 100f
+    val totalAmount = orderAmountFloat + tipAmount - discountAmount
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -50,8 +56,7 @@ fun MainScreen() {
                     focusedContainerColor = Color(0xFFFF69B4).copy(alpha = 0.2f),
                     unfocusedContainerColor = Color(0xFFFF69B4).copy(alpha = 0.2f),
                     focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent,
-                    disabledIndicatorColor = Color.Transparent
+                    unfocusedIndicatorColor = Color.Transparent
                 ),
                 modifier = Modifier
                     .width(150.dp)
@@ -81,7 +86,7 @@ fun MainScreen() {
                 onValueChange = {
                     numberOfDishes.value = it
 
-                    // Автоматическое определение скидки
+                    // Автоматическая скидка
                     val dishes = it.toIntOrNull() ?: 0
                     discountPercentage.value = when (dishes) {
                         in 1..2 -> 3
@@ -97,8 +102,7 @@ fun MainScreen() {
                     focusedContainerColor = Color(0xFFFF69B4).copy(alpha = 0.2f),
                     unfocusedContainerColor = Color(0xFFFF69B4).copy(alpha = 0.2f),
                     focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent,
-                    disabledIndicatorColor = Color.Transparent
+                    unfocusedIndicatorColor = Color.Transparent
                 ),
                 modifier = Modifier
                     .width(150.dp)
@@ -118,9 +122,7 @@ fun MainScreen() {
             modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(text = "Чаевые:")
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(text = "${tipPercentage.value.toInt()}%")
@@ -167,7 +169,7 @@ fun MainScreen() {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             RadioButton(
                                 selected = discountPercentage.value == percent,
-                                onClick = {}, // нельзя вручную менять
+                                onClick = {},
                                 colors = androidx.compose.material3.RadioButtonDefaults.colors(
                                     selectedColor = Color.Blue,
                                     unselectedColor = Color.Gray
@@ -178,6 +180,16 @@ fun MainScreen() {
                     }
                 }
             }
+        }
+
+        // Итоговая информация
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            verticalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+            Text(text = "Сумма чаевых: ${"%.2f".format(tipAmount)}")
+            Text(text = "Сумма скидки: ${"%.2f".format(discountAmount)}")
+            Text(text = "Итоговая сумма: ${"%.2f".format(totalAmount)}")
         }
     }
 }
