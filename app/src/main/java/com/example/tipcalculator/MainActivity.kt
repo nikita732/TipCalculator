@@ -7,6 +7,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -26,6 +27,7 @@ fun MainScreen() {
     val orderAmount = remember { mutableStateOf("") }
     val numberOfDishes = remember { mutableStateOf("") }
     val tipPercentage = remember { mutableStateOf(0f) }
+    val discountPercentage = remember { mutableStateOf(0) }
 
     Column(
         modifier = Modifier
@@ -136,6 +138,49 @@ fun MainScreen() {
             ) {
                 Text(text = "0")
                 Text(text = "25")
+            }
+        }
+
+        // Четвертая строка: Скидка
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Text(text = "Скидка:")
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly, // равномерное распределение
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    RadioButton(
+                        selected = discountPercentage.value == 3,
+                        onClick = { discountPercentage.value = 3 }
+                    )
+                    Text(text = "3%")
+                }
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    RadioButton(
+                        selected = discountPercentage.value == 5,
+                        onClick = { discountPercentage.value = 5 }
+                    )
+                    Text(text = "5%")
+                }
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    RadioButton(
+                        selected = discountPercentage.value == 7,
+                        onClick = { discountPercentage.value = 7 }
+                    )
+                    Text(text = "7%")
+                }
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    RadioButton(
+                        selected = discountPercentage.value == 10,
+                        onClick = { discountPercentage.value = 10 }
+                    )
+                    Text(text = "10%")
+                }
             }
         }
     }
